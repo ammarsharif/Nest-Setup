@@ -1,0 +1,21 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "firebase-verification",
+    "main",
+    "origin",
+    "typeorm-db"
+  ],
+  "parent": {
+    "firebase-verification": "main",
+    "main": null,
+    "origin": "main",
+    "typeorm-db": "main"
+  },
+  "order": [
+    "main",
+    "firebase-verification",
+    "origin",
+    "typeorm-db"
+  ]
+}
