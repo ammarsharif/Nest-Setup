@@ -16,4 +16,14 @@ export class AuthController {
   async login(@Body() body: { email: string; password: string }) {
     return this.authService.login(body.email, body.password);
   }
+
+  @Post('send-verification-email')
+  async sendVerificationEmail(@Body() body: { uid: string }) {
+    return this.authService.sendVerificationEmail(body.uid);
+  }
+
+  @Post('resend-verification-email')
+  async resendVerificationEmail(@Body() body: { email: string }) {
+    return this.authService.resendVerificationEmail(body.email);
+  }
 }
