@@ -3,19 +3,37 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { ActionCodeSettings, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase_config';
 import { BrevoTemplates, BrevoUtils } from '../utils/brevo';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(
+    private firebaseService: FirebaseService,
+    private userService: UserService,
+  ) {}
 
   async verifyToken(idToken: string) {
     try {
       const decodedToken = await this.firebaseService
         .getAuth()
         .verifyIdToken(idToken);
-      return decodedToken;
-    } catch (error: any) {
-      throw new UnauthorizedException('Invalid or expired Firebase token');
+      let user = await this.userService.findByUid(decodedToken.uid as string);
+
+      if (!user) {
+        user = await this.userService.createUser({
+          _id: decodedToken._id as string,
+          email: decodedToken.email,
+          name: (decodedToken.name as string) || '',
+          photoURL: decodedToken.picture || '',
+        });
+      }
+
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException(
+        'Invalid or expired Firebase token',
+        error,
+      );
     }
   }
 
@@ -26,6 +44,13 @@ export class AuthService {
         password,
         displayName,
       });
+
+      const user = await this.userService.createUser({
+        _id: userRecord.uid,
+        email: userRecord.email,
+        name: userRecord.displayName,
+        photoURL: userRecord.photoURL || '',
+      });
       await this.sendVerificationEmail(userRecord.uid);
       return {
         uid: userRecord.uid,
@@ -33,7 +58,8 @@ export class AuthService {
         displayName: userRecord.displayName,
         Email: 'Please verify your email',
       };
-    } catch (error: any) {
+      return user;
+    } catch (error) {
       throw new UnauthorizedException(error.message);
     }
   }
