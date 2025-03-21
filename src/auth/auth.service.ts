@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { ActionCodeSettings, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase_config';
 import { BrevoTemplates, BrevoUtils } from '../utils/brevo';
 
@@ -101,6 +101,34 @@ export class AuthService {
         throw new UnauthorizedException('Failed to send verification email');
       }
       return { message: 'Verification email resent' };
+    } catch (error: any) {
+      throw new UnauthorizedException(error.message);
+    }
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const user = await this.firebaseService.getAuth().getUserByEmail(email);
+      const actionCodeSettings: ActionCodeSettings = {
+        url: `https://nest-auth-38003.firebaseapp.com/__/auth/action/forgot-password`,
+        handleCodeInApp: true,
+      };
+      const resetPasswordLink = await this.firebaseService
+        .getAuth()
+        .generatePasswordResetLink(email, actionCodeSettings);
+      const emailSent = await BrevoUtils.send(
+        BrevoTemplates.ForgotPassword,
+        {
+          name: user.email,
+          resetPasswordLink,
+        },
+        user.email ?? '',
+      );
+      if (emailSent) {
+        return { message: 'Password reset email sent to ' + user.email };
+      } else {
+        throw new UnauthorizedException('Failed to send password reset email');
+      }
     } catch (error: any) {
       throw new UnauthorizedException(error.message);
     }

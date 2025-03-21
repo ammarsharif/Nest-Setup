@@ -4,6 +4,7 @@ import { HttpStatus } from '@nestjs/common';
 export enum BrevoTemplates {
   AccountVerification = 1,
   AccountVerificationTemplate = 2,
+  ForgotPassword = 3,
 }
 
 export class BrevoUtils {
@@ -18,7 +19,7 @@ export class BrevoUtils {
       const api = new brevo.TransactionalEmailsApi();
       api.setApiKey(
         brevo.TransactionalEmailsApiApiKeys.apiKey,
-        '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',
+        process.env.BREVO_API_KEY ?? '',
       );
       const res = await api.sendTransacEmail({
         to: [

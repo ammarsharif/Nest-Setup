@@ -26,4 +26,9 @@ export class AuthController {
   async resendVerificationEmail(@Body() body: { email: string }) {
     return this.authService.resendVerificationEmail(body.email);
   }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    return this.authService.forgotPassword(body.email);
+  }
 }
