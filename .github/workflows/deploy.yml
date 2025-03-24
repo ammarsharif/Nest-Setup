@@ -1,4 +1,4 @@
-name: Deploy NestJS Auth
+  name: Deploy NestJS Auth
 
 on:
   push:
@@ -34,4 +34,4 @@ jobs:
     steps:
       - name: Deploy to Server
         run: |
-          ssh user@your-server-ip "docker pull ammarsharif/nestjs-auth && docker stop nestjs-auth || true && docker rm nestjs-auth || true && docker run -d -p 3000:3000 --name nestjs-auth ammarsharif/nestjs-auth"
+          ssh user@your-server-ip "docker pull your-dockerhub-username/nestjs-auth && docker stop nestjs-auth || true && docker rm nestjs-auth || true && docker run -d -p 3000:3000 --name nestjs-auth your-dockerhub-username/nestjs-auth"
