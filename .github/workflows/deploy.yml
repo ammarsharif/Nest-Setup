@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ammarsharif/nestjs-auth .
-          docker push ammarsharif/nestjs-auth
+          docker build -t your-dockerhub-username/nestjs-auth .
+          docker push your-dockerhub-username/nestjs-auth
 
   deploy:
     runs-on: ubuntu-latest
