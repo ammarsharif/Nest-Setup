@@ -18,7 +18,6 @@ export class AuthService {
         .getAuth()
         .verifyIdToken(idToken);
       let user = await this.userService.findByUid(decodedToken.uid as string);
-
       if (!user) {
         user = await this.userService.createUser({
           _id: decodedToken._id as string,
@@ -86,6 +85,7 @@ export class AuthService {
       const verification_url = await this.firebaseService
         .getAuth()
         .generateEmailVerificationLink(user.email ?? '');
+
       const emailSent = await BrevoUtils.send(
         BrevoTemplates.AccountVerificationTemplate,
         {
@@ -113,6 +113,7 @@ export class AuthService {
       const verification_url = await this.firebaseService
         .getAuth()
         .generateEmailVerificationLink(email);
+      console.log('verification_url', verification_url);
       const emailSent = await BrevoUtils.send(
         BrevoTemplates.AccountVerification,
         {

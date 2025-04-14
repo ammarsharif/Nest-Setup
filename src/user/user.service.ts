@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './schemas/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
   async findByUid(_id: string): Promise<User | null> {
-    return this.userModel.findOne({ _id }).exec();
+    return this.userRepository.findOne({ where: { _id } });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async createUser(userData: {
@@ -17,10 +24,10 @@ export class UserService {
     name: string | undefined;
     photoURL: string;
   }) {
-    return this.userModel.create(userData);
+    return this.userRepository.save(userData);
   }
 
   async updateUser(_id: string, updateData: Partial<User>) {
-    return this.userModel.findOneAndUpdate({ _id }, updateData, { new: true });
+    return this.userRepository.update(_id, updateData);
   }
 }
