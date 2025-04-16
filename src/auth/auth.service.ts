@@ -3,7 +3,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { ActionCodeSettings, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase_config';
 import { BrevoTemplates, BrevoUtils } from '../utils/brevo';
-import { UserService } from '../user/user.service';
+import { UserService } from '../modules/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -17,14 +17,12 @@ export class AuthService {
       const decodedToken = await this.firebaseService
         .getAuth()
         .verifyIdToken(idToken);
-      let user = await this.userService.findByUid(decodedToken.uid as string);
-
+      let user = await this.userService.findByUid(decodedToken.uid);
       if (!user) {
         user = await this.userService.createUser({
-          _id: decodedToken._id as string,
+          id: decodedToken.uid,
           email: decodedToken.email,
           name: (decodedToken.name as string) || '',
-          photoURL: decodedToken.picture || '',
         });
       }
 
@@ -45,11 +43,10 @@ export class AuthService {
         displayName,
       });
 
-      const user = await this.userService.createUser({
-        _id: userRecord.uid,
+      await this.userService.createUser({
+        id: userRecord.uid,
         email: userRecord.email,
         name: userRecord.displayName,
-        photoURL: userRecord.photoURL || '',
       });
       await this.sendVerificationEmail(userRecord.uid);
       return {
@@ -58,7 +55,6 @@ export class AuthService {
         displayName: userRecord.displayName,
         Email: 'Please verify your email',
       };
-      return user;
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
@@ -86,6 +82,7 @@ export class AuthService {
       const verification_url = await this.firebaseService
         .getAuth()
         .generateEmailVerificationLink(user.email ?? '');
+
       const emailSent = await BrevoUtils.send(
         BrevoTemplates.AccountVerificationTemplate,
         {
@@ -113,6 +110,7 @@ export class AuthService {
       const verification_url = await this.firebaseService
         .getAuth()
         .generateEmailVerificationLink(email);
+      console.log('verification_url', verification_url);
       const emailSent = await BrevoUtils.send(
         BrevoTemplates.AccountVerification,
         {
@@ -126,7 +124,6 @@ export class AuthService {
       } else {
         throw new UnauthorizedException('Failed to send verification email');
       }
-      return { message: 'Verification email resent' };
     } catch (error: any) {
       throw new UnauthorizedException(error.message);
     }

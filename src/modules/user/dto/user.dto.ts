@@ -43,3 +43,41 @@ export class UserDto {
   @IsEnum(Permissions, { each: true })
   role: Permissions[];
 }
+
+export class UserProfileDto {
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(30)
+  name: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  photoURL: string;
+
+  @IsNotEmpty()
+  isEmailVerified: boolean;
+
+  @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(15)
+  @Matches(/^\d+$/, { message: 'phoneNumber must be numeric' })
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  location: string;
+
+  @IsNotEmpty()
+  id: string;
+
+  @IsNotEmpty()
+  createdAt: Date;
+
+  @IsNotEmpty()
+  updatedAt: Date;
+
+  @IsNotEmpty()
+  lastLogin: Date;
+}
