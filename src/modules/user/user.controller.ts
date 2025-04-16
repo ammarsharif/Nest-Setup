@@ -30,7 +30,7 @@ export class UserController {
 
   @ApiOkResponse({
     type: UserProfileDto,
-    description: 'The user profile has been successfully retrieved',
+    description: 'The user profile has been successfully retrieved ',
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Not Found' })
