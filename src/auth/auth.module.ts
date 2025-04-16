@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { FirebaseService } from '../firebase/firebase.service';
 import { PassportModule } from '@nestjs/passport';
 import { FirebaseStrategy } from './strategies/firebase.strategy';
-import { UserModule } from '../user/user.module';
+import { UserModule } from '../modules/user/user.module';
 
 @Module({
   imports: [PassportModule, UserModule],

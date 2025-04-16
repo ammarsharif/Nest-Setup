@@ -8,7 +8,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
+import { FirebaseAuthGuard } from '../../auth/guards/firebase-auth.guard';
 import { RequestWithUser } from './schemas/user.schema';
 import {
   ApiBearerAuth,

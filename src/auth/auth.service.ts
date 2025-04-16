@@ -3,7 +3,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { ActionCodeSettings, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase_config';
 import { BrevoTemplates, BrevoUtils } from '../utils/brevo';
-import { UserService } from '../user/user.service';
+import { UserService } from '../modules/user/user.service';
 
 @Injectable()
 export class AuthService {
