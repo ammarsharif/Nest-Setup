@@ -10,8 +10,8 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findByUid(_id: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { _id } });
+  async findByUid(id: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -19,15 +19,19 @@ export class UserService {
   }
 
   async createUser(userData: {
-    _id: string;
+    id: string;
     email: string | undefined;
     name: string | undefined;
-    photoURL: string;
   }) {
     return this.userRepository.save(userData);
   }
 
-  async updateUser(_id: string, updateData: Partial<User>) {
-    return this.userRepository.update(_id, updateData);
+  async updateUser(id: string, userData: User) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return this.userRepository.save({ ...user, ...userData });
   }
 }

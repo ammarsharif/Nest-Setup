@@ -1,4 +1,12 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
 import { RequestWithUser } from './schemas/user.schema';
 import {
@@ -9,9 +17,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
+import { UserService } from './user.service';
+import { User } from './schemas/user.entity';
 
 @Controller('user')
 export class UserController {
+  constructor(private readonly userService: UserService) {}
+
   @UseGuards(FirebaseAuthGuard)
   @ApiOkResponse({
     type: UserDto,
@@ -33,5 +45,25 @@ export class UserController {
   @Get('profile')
   getProfile(@Request() req: RequestWithUser) {
     return req.user;
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @ApiOkResponse({
+    type: User,
+    description: 'The user profile has been successfully updated',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiOperation({
+    description: 'Update User Profile',
+    summary: 'Update User Profile',
+  })
+  @Patch('update/:id')
+  updateProfile(@Param('id') id: string, @Body() data: User) {
+    if (!id) {
+      throw new Error('User ID is required');
+    }
+    return this.userService.updateUser(id, data);
   }
 }
