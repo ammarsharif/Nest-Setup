@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -34,5 +35,23 @@ export class TaskController {
     },
   ) {
     return this.taskService.update(taskId, payload.updates, payload.newUserId);
+  }
+
+  @Patch('remove/:taskId')
+  @ApiOperation({ summary: 'Remove task assignment' })
+  async removeTask(
+    @Param('taskId') taskId: string,
+    @Body()
+    payload: {
+      newUserId?: string;
+    },
+  ) {
+    return this.taskService.removeAssignment(taskId, payload.newUserId);
+  }
+
+  @Delete('delete/:taskId')
+  @ApiOperation({ summary: 'Delete task' })
+  async deleteTask(@Param('taskId') taskId: string) {
+    return this.taskService.delete(taskId);
   }
 }

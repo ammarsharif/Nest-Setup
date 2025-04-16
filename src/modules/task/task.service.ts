@@ -47,4 +47,28 @@ export class TaskService {
     Object.assign(task, updates);
     return this.taskRepository.save(task);
   }
+
+  async removeAssignment(id: string, newUserId?: string): Promise<Task> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) throw new NotFoundException('Task not found');
+
+    if (newUserId) {
+      const newUser = await this.userRepository.findOne({
+        where: { id: newUserId },
+      });
+      if (!newUser) throw new NotFoundException('User not found');
+      task.assignedUser = newUser;
+    } else {
+      task.assignedUser = null;
+    }
+
+    return this.taskRepository.save(task);
+  }
+
+  async delete(id: string): Promise<void> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) throw new NotFoundException('Task not found');
+
+    await this.taskRepository.remove(task);
+  }
 }

@@ -23,9 +23,9 @@ export class Task {
   @Column({ nullable: false })
   status: string;
 
-  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true, nullable: true })
   @JoinColumn({ name: 'assignedUserId' })
-  assignedUser: User;
+  assignedUser: User | null;
 
   @CreateDateColumn()
   createdAt: Date;
