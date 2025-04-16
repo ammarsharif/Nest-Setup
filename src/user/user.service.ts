@@ -34,4 +34,13 @@ export class UserService {
 
     return this.userRepository.save({ ...user, ...userData });
   }
+
+  async deleteUser(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return this.userRepository.remove(user);
+  }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -65,5 +66,32 @@ export class UserController {
       throw new Error('User ID is required');
     }
     return this.userService.updateUser(id, data);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @ApiOkResponse({
+    type: User,
+    description: 'The user profile has been deleted successfully',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiNotFoundResponse({
+    description: 'Not Found',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Some Unknown Error Occurred',
+  })
+  @ApiOperation({
+    description: 'Delete User Profile',
+    summary: 'Delete User Profile',
+  })
+  @Delete('delete/:id')
+  deleteProfile(@Param('id') id: string) {
+    if (!id) {
+      throw new Error('User ID is required');
+    }
+    console.log('deleteProfile', id);
+    return this.userService.deleteUser(id);
   }
 }
