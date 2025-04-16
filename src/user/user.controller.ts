@@ -11,6 +11,7 @@ import {
 import { FirebaseAuthGuard } from '../auth/guards/firebase-auth.guard';
 import { RequestWithUser } from './schemas/user.schema';
 import {
+  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -26,6 +27,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     type: UserDto,
     description: 'The user profile has been successfully retrieved',
@@ -49,6 +51,7 @@ export class UserController {
   }
 
   @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     type: User,
     description: 'The user profile has been successfully updated',
@@ -69,6 +72,7 @@ export class UserController {
   }
 
   @UseGuards(FirebaseAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOkResponse({
     type: User,
     description: 'The user profile has been deleted successfully',
