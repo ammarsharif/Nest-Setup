@@ -1,13 +1,13 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { FirebaseAuthGuard } from '../../auth/guards/firebase-auth.guard';
 import {
-  ApiBearerAuth,
-  ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { FirebaseAuthGuard } from '../../auth/guards/firebase-auth.guard';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { TaskService } from './task.service';
 import { TaskDto } from './dto/task.dto';
 
@@ -17,21 +17,22 @@ import { TaskDto } from './dto/task.dto';
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @ApiOkResponse({
-    type: TaskDto,
-    description: 'Task Created Successfully',
-  })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiInternalServerErrorResponse({
-    description: 'Some Unknown Error Occurred',
-  })
-  @ApiOperation({
-    summary: 'Create Task',
-    description: 'Create a new task',
-  })
-  @Post('create/:id')
-  async createTask(@Param('id') id: string, task: TaskDto): Promise<TaskDto> {
-    return this.taskService.create(id, task);
+  @Post('create/:userId')
+  @ApiOperation({ summary: 'Create and assign task' })
+  async createTask(@Param('userId') userId: string, @Body() taskDto: TaskDto) {
+    return this.taskService.create(userId, taskDto);
+  }
+
+  @Patch('update/:taskId')
+  @ApiOperation({ summary: 'Update task status or assignment' })
+  async updateTask(
+    @Param('taskId') taskId: string,
+    @Body()
+    payload: {
+      updates: Partial<TaskDto>;
+      newUserId?: string;
+    },
+  ) {
+    return this.taskService.update(taskId, payload.updates, payload.newUserId);
   }
 }

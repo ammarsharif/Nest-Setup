@@ -1,8 +1,7 @@
-import { IsAlpha, IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsEnum, IsNotEmpty, MaxLength } from 'class-validator';
 
 export class TaskDto {
   @IsNotEmpty()
-  @IsAlpha()
   @MaxLength(50)
   title: string;
 
@@ -13,14 +12,12 @@ export class TaskDto {
   @IsNotEmpty()
   @IsEnum(['TODO', 'IN_PROGRESS', 'DONE'])
   status: string;
+}
+
+export class TaskUpdateDto {
+  @IsEnum(['TODO', 'IN_PROGRESS', 'DONE'])
+  status?: string;
 
   @IsNotEmpty()
-  @IsAlpha()
-  assignedTo: string;
-
-  @IsNotEmpty()
-  createdAt: Date;
-
-  @IsNotEmpty()
-  updatedAt: Date;
+  assignedUserId?: string;
 }

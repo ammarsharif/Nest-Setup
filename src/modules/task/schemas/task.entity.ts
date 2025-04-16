@@ -1,12 +1,18 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../user/schemas/user.entity';
 
 @Entity()
 export class Task {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false })
-  assignedTo: string;
 
   @Column({ nullable: false })
   title: string;
@@ -17,9 +23,13 @@ export class Task {
   @Column({ nullable: false })
   status: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
+  @JoinColumn({ name: 'assignedUserId' })
+  assignedUser: User;
+
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

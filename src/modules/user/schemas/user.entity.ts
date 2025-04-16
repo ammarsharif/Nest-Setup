@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Task } from '../../task/schemas/task.entity';
 
 @Entity()
 export class User {
@@ -23,10 +31,13 @@ export class User {
   @Column({ nullable: true })
   location: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @OneToMany(() => Task, (task) => task.assignedUser)
+  tasks: Task[];
+
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
